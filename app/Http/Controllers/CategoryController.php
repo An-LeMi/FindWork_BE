@@ -126,4 +126,20 @@ class CategoryController extends Controller
             'message' => 'Category deleted'
         ], Response::HTTP_OK);
     }
+
+    // get all skills of a category
+    public function getSkills($id)
+    {
+        //
+        $category = Category::find($id);
+        if (!$category) {
+            return response()->json([
+                'message' => 'Category not found'
+            ], Response::HTTP_NOT_FOUND);
+        }
+        $skills = $category->skills;
+        return response()->json([
+            'skills' => $skills,
+        ], Response::HTTP_OK);
+    }
 }

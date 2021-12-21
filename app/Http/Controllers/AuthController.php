@@ -46,8 +46,10 @@ class AuthController extends Controller
         $token = $user->createToken('Laravel Password Grant Client')->plainTextToken;
 
         return response([
+            'user_id' => $user->id,
+            'role' => $user->role,
             'token' => $token,
-            'message' => 'User Created'
+            'message' => 'User Created',
         ], Response::HTTP_CREATED);
     }
 
@@ -82,13 +84,15 @@ class AuthController extends Controller
         $token = $user->createToken('Laravel Password Grant Client')->plainTextToken;
 
         return response([
+            'id' => $user->id,
+            'role' => $user->role,
             'token' => $token,
             'message' => 'Successfully logged in'
         ], Response::HTTP_OK);
     }
 
     // get user
-    public function getUser(Request $request)
+    public function getUser()
     {
         $user = Auth::user();
 

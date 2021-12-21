@@ -94,6 +94,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     // category resource
     Route::resource('category', CategoryController::class);
+    // get all skills of category
+    Route::get('category/{category}/skills', [CategoryController::class, 'getSkills']);
     // skill resource
     Route::resource('skill', SkillController::class);
 });
