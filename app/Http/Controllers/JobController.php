@@ -83,8 +83,15 @@ class JobController extends Controller
                 'message' => 'Job not found'
             ], Response::HTTP_NOT_FOUND);
         }
+
+        $jobSkills = $job->jobSkills;
+        $skills = [];
+        foreach ($jobSkills as $jobSkill) {
+            $skills[] = $jobSkill->skill;
+        }
+
         return response()->json([
-            'job' => $job,
+            'job' => $job
         ], Response::HTTP_OK);
     }
 
@@ -474,6 +481,12 @@ class JobController extends Controller
             ], Response::HTTP_NOT_FOUND);
         }
 
+        $employee = $employeeJob->employee;
+        $employeeSkills = $employee->employeeSkills;
+        $employeeSkills->each(function ($employeeSkill) {
+            $employeeSkill->skill;
+        });
+
         return response()->json([
             'employeeJob' => $employeeJob,
             'message' => 'Employee offer'
@@ -501,11 +514,17 @@ class JobController extends Controller
 
         $employeeJobs = EmployeeJob::where('job_id', $job->id)->get();
 
+        $employeeJobs->each(function ($employeeJob) {
+            $employee = $employeeJob->employee;
+            $employeeSkills = $employee->employeeSkills;
+            $employeeSkills->each(function ($employeeSkill) {
+                $employeeSkill->skill;
+            });
+        });
+
         return response()->json([
             'employeeJobs' => $employeeJobs,
             'message' => 'Employee offers'
         ], Response::HTTP_OK);
     }
-
-
 }

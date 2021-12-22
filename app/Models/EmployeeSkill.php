@@ -27,7 +27,6 @@ class EmployeeSkill extends Model
         return $this->belongsTo(Employee::class, 'employee_id');
     }
 
-    // employee_skill belongs to skill
     public function skill()
     {
         return $this->belongsTo(Skill::class, 'skill_id');

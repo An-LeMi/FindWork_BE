@@ -31,7 +31,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     /**
      * enterprise resource
      */
-    Route::resource('enterprise', EnterpriseController::class);
+    Route::resource('enterprise', EnterpriseController::class)->except(['create', 'edit']);
     // get all jobs of enterprise
     Route::get('enterprise/{enterprise}/jobs', [EnterpriseController::class, 'getJobs']);
     // end enterprise resource

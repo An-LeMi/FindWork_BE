@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Employee;
 use App\Models\EmployeeSkill;
 use App\Models\EmployeeJob;
+use App\Models\Enterprise;
+use App\Models\Job;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -83,8 +85,16 @@ class EmployeeController extends Controller
                 'message' => 'employee not found'
             ], Response::HTTP_NOT_FOUND);
         }
+
+        $employeeSkills = EmployeeSkill::where('employee_id', $id)->get();
+        $skills = [];
+        $employeeSkills->each(function ($employeeSkill) use (&$skills) {
+            $skills[] = $employeeSkill->skill;
+        });
+
         return response()->json([
             'employee' => $employee,
+            'skills' => $skills,
             'message' => 'employee found'
         ], Response::HTTP_OK);
     }
@@ -292,6 +302,8 @@ class EmployeeController extends Controller
             ], Response::HTTP_NOT_FOUND);
         }
 
+        $employeeSkill->skill;
+
         return response()->json([
             'employeeSkill' => $employeeSkill,
             'message' => 'employeeSkill found'
@@ -310,6 +322,10 @@ class EmployeeController extends Controller
         }
 
         $employeeSkills = EmployeeSkill::where('employee_id', $employee->user_id)->get();
+
+        $employeeSkills->each(function ($employeeSkill) {
+            $employeeSkill->skill;
+        });
 
         return response()->json([
             'employeeSkills' => $employeeSkills,
@@ -473,10 +489,23 @@ class EmployeeController extends Controller
             ], Response::HTTP_NOT_FOUND);
         }
 
-        return response()->json([
-            'employeeJob' => $employeeJob,
-            'message' => 'employeeJob found'
-        ], Response::HTTP_OK);
+        $job = $employeeJob->job;
+
+        $enterprise = Enterprise::find($job->enterprise_id);
+
+        if ($employeeJob->status == "accepted") {
+            return response()->json([
+                'employeeJob' => $employeeJob,
+                'enterprise' => $enterprise,
+                'message' => 'employeeJob found'
+            ], Response::HTTP_OK);
+        } else {
+            return response()->json([
+                'employeeJob' => $employeeJob,
+                'enterprise_name' => $enterprise->name,
+                'message' => 'employeeJob found'
+            ], Response::HTTP_OK);
+        }
     }
 
     // get all job of employee
