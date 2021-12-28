@@ -6,6 +6,7 @@ use App\Models\Job;
 use App\Models\Skill;
 use App\Models\JobSkill;
 use App\Models\EmployeeJob;
+use App\Models\EmployeeSkill;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -514,7 +515,7 @@ class JobController extends Controller
         ], Response::HTTP_OK);
     }
 
-    // show all offers of job
+    // show all offers of job order by created time and number of similar skill
     public function getOffers($id)
     {
         //
@@ -533,9 +534,11 @@ class JobController extends Controller
             ], Response::HTTP_BAD_REQUEST);
         }
 
-        $employeeJobs = EmployeeJob::where('job_id', $job->id)->get();
 
-        $employeeJobs->each(function ($employeeJob) {
+        $skills = JobSkill::where('job_id', $job->id)->get()->pluck('skill_id')->toArray();
+        $employeeJobs = EmployeeJob::where('job_id', $job->id)->orderBy("created_at", "desc")->get();
+
+        $employeeJobs->each(function ($employeeJob){
             $employee = $employeeJob->employee;
             if ($employeeJob->status != "accepted"){
                 $employee->phone = null;
@@ -546,6 +549,14 @@ class JobController extends Controller
             $employeeSkills->each(function ($employeeSkill) {
                 $employeeSkill->skill;
             });
+        });
+
+        $employeeJobs = $employeeJobs->sortByDesc(function ($employeeJob) use ($skills) {
+            $employeeSkillIDs = EmployeeSkill::where('employee_id', $employeeJob->employee_id)->get()->pluck('skill_id')->toArray();
+            // $employeeJob->emoloyeeskill = $employeeSkillIDs;
+            $similarSkills = array_intersect($employeeSkillIDs, $skills);
+            // $employeeJob->similar = count($similarSkills);
+            return count($similarSkills);
         });
 
         return response()->json([
