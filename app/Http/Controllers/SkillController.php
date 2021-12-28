@@ -135,4 +135,20 @@ class SkillController extends Controller
             'message' => 'skill deleted',
         ], Response::HTTP_OK);
     }
+
+    // search skill
+    public function searchSkillName($name)
+    {
+        $skill = Skill::where('name', 'LIKE', '%' . $name . '%')->get();
+        if (count($skill)) {
+            return response()->json([
+                'skill' => $skill,
+                'message' => 'Successful search'
+            ], Response::HTTP_OK);
+        } else {
+            return response()->json([
+                'message' => 'Skill not found'
+            ], Response::HTTP_NOT_FOUND);
+        }
+    }
 }

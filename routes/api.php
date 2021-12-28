@@ -42,6 +42,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::resource('employee', EmployeeController::class);
     // add skill to employee
     Route::post('employee/{employee}/skill', [EmployeeController::class, 'storeSkill']);
+    // search employee
+    Route::get('employee/search/{name}', [EmployeeController::class, 'searchEmployeeName']);
 
     // employee-skill relationship
     // delete skill from employee
@@ -78,6 +80,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::put('job/{job}/skill/{skill}', [JobController::class, 'updateSkill']);
     // get all skills of a job
     Route::get('job/{job}/skills', [JobController::class, 'getSkills']);
+    // search job by name
+    Route::get('job/search/{name}',[JobController::class, 'searchJobName']);
 
     // employer-job relationship
     // add offer (job request employee)
@@ -98,4 +102,6 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('category/{category}/skills', [CategoryController::class, 'getSkills']);
     // skill resource
     Route::resource('skill', SkillController::class);
+    // search skill by name
+    Route::get('skill/search/{name}', [SkillController::class, 'searchSkillName']);
 });

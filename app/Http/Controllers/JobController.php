@@ -171,6 +171,22 @@ class JobController extends Controller
         ], Response::HTTP_OK);
     }
 
+    // search job
+    public function searchJobName($name){
+        $job = Job::where('name', 'LIKE', '%'.$name.'%')->get();
+        if(count($job)){
+            return response()->json([
+                'job' => $job,
+                'message' => 'Successful search'
+            ], Response::HTTP_OK);
+        }
+        else{
+            return response()->json([
+                'message' => 'Job not found'
+            ], Response::HTTP_NOT_FOUND);
+        }
+    }
+
     /**
      * skill function
      */
@@ -482,6 +498,11 @@ class JobController extends Controller
         }
 
         $employee = $employeeJob->employee;
+        if ($employeeJob->status != "accepted"){
+            $employee->phone = null;
+            $employee->email = null;
+            $employee->address = null;
+        }
         $employeeSkills = $employee->employeeSkills;
         $employeeSkills->each(function ($employeeSkill) {
             $employeeSkill->skill;
@@ -516,6 +537,11 @@ class JobController extends Controller
 
         $employeeJobs->each(function ($employeeJob) {
             $employee = $employeeJob->employee;
+            if ($employeeJob->status != "accepted"){
+                $employee->phone = null;
+                $employee->email = null;
+                $employee->address = null;
+            }
             $employeeSkills = $employee->employeeSkills;
             $employeeSkills->each(function ($employeeSkill) {
                 $employeeSkill->skill;
