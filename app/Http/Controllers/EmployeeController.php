@@ -160,6 +160,25 @@ class EmployeeController extends Controller
         }
         $employee->delete();
     }
+
+
+    // search job
+    public function searchEmployeeName($name)
+    {
+        $employee = Employee::where('name', 'LIKE', '%' . $name . '%')->get();
+        if (count($employee)) {
+            return response()->json([
+                'employee' => $employee,
+                'message' => 'Successful search'
+            ], Response::HTTP_OK);
+        } else {
+            return response()->json([
+                'message' => 'Employee not found'
+            ], Response::HTTP_NOT_FOUND);
+        }
+    }
+
+
     /**
      * skill function
      */
