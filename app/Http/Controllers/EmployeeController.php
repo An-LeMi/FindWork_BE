@@ -342,8 +342,12 @@ class EmployeeController extends Controller
 
         $employeeSkills = EmployeeSkill::where('employee_id', $employee->user_id)->get();
 
-        $employeeSkills->each(function ($employeeSkill) {
-            $employeeSkill->skill;
+        $employeeSkills = $employeeSkills->map(function ($employeeSkill) {
+            return [
+                'skill' => $employeeSkill->skill,
+                'level' => $employeeSkill->level,
+                'years_of_experience' => $employeeSkill->years_of_experience,
+            ];
         });
 
         return response()->json([

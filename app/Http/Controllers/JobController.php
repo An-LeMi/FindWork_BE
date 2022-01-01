@@ -10,6 +10,8 @@ use App\Models\EmployeeSkill;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
+use function GuzzleHttp\Promise\each;
+
 class JobController extends Controller
 {
     /**
@@ -173,15 +175,15 @@ class JobController extends Controller
     }
 
     // search job
-    public function searchJobName($name){
-        $job = Job::where('name', 'LIKE', '%'.$name.'%')->get();
-        if(count($job)){
+    public function searchJobName($name)
+    {
+        $job = Job::where('name', 'LIKE', '%' . $name . '%')->get();
+        if (count($job)) {
             return response()->json([
                 'job' => $job,
                 'message' => 'Successful search'
             ], Response::HTTP_OK);
-        }
-        else{
+        } else {
             return response()->json([
                 'message' => 'Job not found'
             ], Response::HTTP_NOT_FOUND);
@@ -340,6 +342,19 @@ class JobController extends Controller
         }
 
         $jobSkills = JobSkill::where('job_id', $job->id)->get();
+        if (!$jobSkills) {
+            return response()->json([
+                'message' => 'No skills found in this job'
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        $jobSkills = $jobSkills->map(function ($jobSkill) {
+            return [
+                'id' => $jobSkill->id,
+                'skill' => $jobSkill->skill,
+                'level' => $jobSkill->level,
+            ];
+        });
 
         return response()->json([
             'jobSkills' => $jobSkills,
@@ -499,7 +514,7 @@ class JobController extends Controller
         }
 
         $employee = $employeeJob->employee;
-        if ($employeeJob->status != "accepted"){
+        if ($employeeJob->status != "accepted") {
             $employee->phone = null;
             $employee->email = null;
             $employee->address = null;
@@ -538,9 +553,9 @@ class JobController extends Controller
         $skills = JobSkill::where('job_id', $job->id)->get()->pluck('skill_id')->toArray();
         $employeeJobs = EmployeeJob::where('job_id', $job->id)->orderBy("created_at", "desc")->get();
 
-        $employeeJobs->each(function ($employeeJob){
+        $employeeJobs->each(function ($employeeJob) {
             $employee = $employeeJob->employee;
-            if ($employeeJob->status != "accepted"){
+            if ($employeeJob->status != "accepted") {
                 $employee->phone = null;
                 $employee->email = null;
                 $employee->address = null;
