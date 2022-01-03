@@ -548,7 +548,7 @@ class EmployeeController extends Controller
             ], Response::HTTP_BAD_REQUEST);
         }
 
-        $employeeJobs = EmployeeJob::where('employee_id', $employee->user_id)->get();
+        $employeeJobs = EmployeeJob::where('employee_id', $employee->user_id)->where('offer_direction', 'employee')->get();
         if (!$employeeJobs) {
             return response()->json([
                 'message' => 'employeeJobs not found'
@@ -558,6 +558,35 @@ class EmployeeController extends Controller
         return response()->json([
             'employeeJobs' => $employeeJobs,
             'message' => 'employeeJobs found'
+        ], Response::HTTP_OK);
+    }
+
+    public function getInvitedJobs($id)
+    {
+        $employee = Employee::find($id);
+        if (!$employee) {
+            return response()->json([
+                'message' => 'employee not found'
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        // check employee_id is this user_id
+        if ($employee->user_id != auth()->user()->id) {
+            return response()->json([
+                'message' => 'This employee_id is not this user'
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
+        $invitedJobs = EmployeeJob::where('employee_id', $employee->user_id)->where('offer_direction', 'enterprise')->get();
+        if (!$invitedJobs) {
+            return response()->json([
+                'message' => 'Invited jobs not found'
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        return response()->json([
+            'invitedJobs' => $invitedJobs,
+            'message' => 'Invited jobs found'
         ], Response::HTTP_OK);
     }
     // end employee job

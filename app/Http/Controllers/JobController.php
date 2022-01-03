@@ -175,9 +175,9 @@ class JobController extends Controller
     }
 
     // search job
-    public function searchJobName($name)
+    public function searchJobTitle($title)
     {
-        $job = Job::where('name', 'LIKE', '%' . $name . '%')->get();
+        $job = Job::where('title', 'LIKE', '%' . $title . '%')->get();
         if (count($job)) {
             return response()->json([
                 'job' => $job,
