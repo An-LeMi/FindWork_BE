@@ -589,6 +589,78 @@ class EmployeeController extends Controller
             'message' => 'Invited jobs found'
         ], Response::HTTP_OK);
     }
+
+    // get alls job (order by number of similar skill)
+    public function showJobsMatch($id){
+        $employee = Employee::find($id);
+        if (!$employee) {
+            return response()->json([
+                'message' => 'employee not found'
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        // check employee_id is this user_id
+        if ($employee->user_id != auth()->user()->id) {
+            return response()->json([
+                'message' => 'This employee_id is not this user'
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
+        $employeeSkillIDs = EmployeeSkill::where('employee_id', $employee->user_id)->get()->pluck('skill_id')->toArray();
+
+        $jobs = Job::all();
+        if (!$jobs) {
+            return response()->json([
+                'message' => 'Job not found'
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        $jobs = $jobs->sortByDesc(function ($job) use ($employeeSkillIDs){
+            $jobSkills = $job->jobSkills;
+            $jobSkillIDs = [];
+            foreach($jobSkills as $jobSkill){
+                $jobSkillIDs[] = $jobSkill->skill_id;
+            }
+
+            $similarSkills = array_intersect($employeeSkillIDs, $jobSkillIDs);
+            return count($similarSkills);
+        });
+
+
+        return response()->json([
+            'job' => $jobs,
+            'message' => 'Jobs for employee'
+        ], Response::HTTP_OK);
+    }
+
+    // get jobs by recent
+    public function showJobsRecent($id){
+        $employee = Employee::find($id);
+        if (!$employee) {
+            return response()->json([
+                'message' => 'employee not found'
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        // check employee_id is this user_id
+        if ($employee->user_id != auth()->user()->id) {
+            return response()->json([
+                'message' => 'This employee_id is not this user'
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
+        $jobs = Job::all()->sortByDesc("created_at");
+        if (!$jobs) {
+            return response()->json([
+                'message' => 'Job not found'
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        return response()->json([
+            'job' => $jobs,
+            'message' => 'Jobs for employee'
+        ], Response::HTTP_OK);
+    }
     // end employee job
 
 }

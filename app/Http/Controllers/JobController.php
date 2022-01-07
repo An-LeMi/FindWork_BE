@@ -549,9 +549,14 @@ class JobController extends Controller
             ], Response::HTTP_BAD_REQUEST);
         }
 
-
         $skills = JobSkill::where('job_id', $job->id)->get()->pluck('skill_id')->toArray();
         $employeeJobs = EmployeeJob::where('job_id', $job->id)->orderBy("created_at", "desc")->get();
+
+        if(!$employeeJobs) {
+            return response()->json([
+                'message' => 'Employee job not found'
+            ], Response::HTTP_NOT_FOUND);
+        }
 
         $employeeJobs->each(function ($employeeJob) {
             $employee = $employeeJob->employee;
