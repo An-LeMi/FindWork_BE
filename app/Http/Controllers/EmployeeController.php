@@ -628,7 +628,7 @@ class EmployeeController extends Controller
 
 
         return response()->json([
-            'job' => $jobs,
+            'job' => $jobs->values(),
             'message' => 'Jobs for employee'
         ], Response::HTTP_OK);
     }
@@ -649,7 +649,7 @@ class EmployeeController extends Controller
             ], Response::HTTP_BAD_REQUEST);
         }
 
-        $jobs = Job::all()->sortByDesc("created_at");
+        $jobs = Job::all()->sortByDesc("created_at")->values();
         if (!$jobs) {
             return response()->json([
                 'message' => 'Job not found'
