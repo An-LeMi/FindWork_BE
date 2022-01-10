@@ -169,8 +169,9 @@ class JobController extends Controller
         }
 
         $job->delete();
+        EmployeeJob::where('job_id', $id)->delete();
         return response()->json([
-            'message' => 'Job deleted'
+            'message' => 'Job and employee job deleted'
         ], Response::HTTP_OK);
     }
 
