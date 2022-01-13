@@ -39,4 +39,10 @@ class Job extends Model
     {
         return $this->hasMany(EmployeeJob::class);
     }
+
+    // job has many report jobs
+    public function reportJobs()
+    {
+        return $this->hasMany(ReportJob::class);
+    }
 }

@@ -74,6 +74,16 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('employee/{employee}/jobs/match', [EmployeeController::class, 'showJobsMatch']);
     // get jobs by recent
     Route::get('employee/{employee}/jobs/recent', [EmployeeController::class, 'showJobsRecent']);
+
+    // report-job relationship
+    // create report
+    Route::post('employee/{employee}/job/{job}/report', [EmployeeController::class, 'storeReport']);
+    // update report
+    Route::put('employee/{employee}/job/{job}/report/{report}', [EmployeeController::class, 'updateReport']);
+    // delete report
+    Route::delete('employee/{employee}/job/{job}/report/{report}', [EmployeeController::class, 'destroyReport']);
+    // show all report
+    Route::get('employee/{employee}/job/{jobs}/reports', [EmployeeController::class, 'getReports']);
     // end employee resource
 
     /**

@@ -49,5 +49,10 @@ class Employee extends Model
     {
         return $this->hasMany(EmployeeJob::class, 'employee_id');
     }
-}
 
+    // employee has many report jobs
+    public function reportJobs()
+    {
+        return $this->hasMany(ReportJob::class, 'employee_id');
+    }
+}
