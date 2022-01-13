@@ -7,6 +7,7 @@ use App\Models\Skill;
 use App\Models\JobSkill;
 use App\Models\EmployeeJob;
 use App\Models\EmployeeSkill;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -553,7 +554,7 @@ class JobController extends Controller
         $skills = JobSkill::where('job_id', $job->id)->get()->pluck('skill_id')->toArray();
         $employeeJobs = EmployeeJob::where('job_id', $job->id)->orderBy("created_at", "desc")->get();
 
-        if(!$employeeJobs) {
+        if (!$employeeJobs) {
             return response()->json([
                 'message' => 'Employee job not found'
             ], Response::HTTP_NOT_FOUND);
@@ -584,5 +585,59 @@ class JobController extends Controller
             'employeeJobs' => $employeeJobs,
             'message' => 'Employee offers'
         ], Response::HTTP_OK);
+    }
+
+    // update rating employee
+    public function updateRating(Request $request, $job_id, $employee_id)
+    {
+        // check job id
+        $job = Job::find($job_id);
+        if (!$job) {
+            return response()->json([
+                'message' => 'Job not found'
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        // check this job belongs to this enterprise
+        $user = auth()->user();
+        if (!$user | $user->role != 'enterprise' | $job->enterprise_id != $user->id) {
+            return response()->json([
+                'message' => 'this job does not belong to this enterprise'
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
+        // validate rate
+        $request->validate([
+            "rate" => "required|integer|between:0,5",
+        ]);
+
+        // check employee id
+        $employee_user = User::find($employee_id);
+        if (!$employee_user || $employee_user->role != 'employee') {
+            return response()->json([
+                'message' => 'employee not found'
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        $employeeJob = EmployeeJob::where('job_id', $job_id)->where('employee_id', $employee_id)->first();
+        if (!$employeeJob) {
+            return response()->json([
+                'message' => 'employee job not found'
+            ], Response::HTTP_NOT_FOUND);
+        }
+        if ($employeeJob->status != "accepted") {
+            return response()->json([
+                'message' => 'Cannot vote'
+            ], Response::HTTP_FORBIDDEN);
+        } else {
+            $rating = $employee_user->rating;
+            $num_rates = $employee_user->number_of_rate;
+            $employee_user->rating = ($rating + $request->rate) / ($num_rates + 1);
+            $employee_user->number_of_rate = $num_rates + 1;
+            $employee_user->update();
+            return response()->json([
+                'message' => 'Rating success'
+            ], Response::HTTP_OK);
+        }
     }
 }

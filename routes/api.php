@@ -102,6 +102,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('job/{job}/employee/{employee}', [JobController::class, 'showOffer']);
     // get all offers of job (for enterprise)
     Route::get('job/{job}/employees', [JobController::class, 'getOffers']);
+    // rate employee
+    Route::post('job/{job}/employee/{employee}/rating', [JobController::class, 'updateRating']);
     // end job resource
 
     // category resource
