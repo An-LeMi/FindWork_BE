@@ -830,11 +830,16 @@ class EmployeeController extends Controller
             ], Response::HTTP_NOT_FOUND);
         }
 
+        $reportJobs->each(function ($reportJob) {
+            $reportJob->employee_firstname = Employee::where('user_id', $reportJob->employee_id)->first()->first_name;
+            $reportJob->employee_lastname = Employee::where('user_id', $reportJob->employee_id)->first()->last_name;
+        });
+
         return response()->json([
             'reportJobs' => $reportJobs,
             'message' => 'Report jobs found'
         ], Response::HTTP_OK);
     }
-    // end employee job
+    // end employee report
 
 }
