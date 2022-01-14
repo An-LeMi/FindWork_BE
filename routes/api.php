@@ -83,7 +83,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     // delete report
     Route::delete('employee/{employee}/job/{job}/report/{report}', [EmployeeController::class, 'destroyReport']);
     // show all report
-    Route::get('employee/{employee}/job/{jobs}/reports', [EmployeeController::class, 'getReports']);
+    Route::get('employee/{employee}/job/{job}/reports', [EmployeeController::class, 'getReports']);
     // end employee resource
 
     /**
@@ -114,6 +114,16 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('job/{job}/employees', [JobController::class, 'getOffers']);
     // rate employee
     Route::post('job/{job}/employee/{employee}/rating', [JobController::class, 'updateRating']);
+
+    // report-employee relationship
+    // create report
+    Route::post('job/{job}/employee/{employee}/report', [JobController::class, 'storeReport']);
+    // update report
+    Route::put('job/{job}/employee/{employee}/report/{report}', [JobController::class, 'updateReport']);
+    // delete report
+    Route::delete('job/{job}/employee/{employee}/report/{report}', [JobController::class, 'destroyReport']);
+    // show all report
+    Route::get('job/{job}/employee/{employee}/reports', [JobController::class, 'getReports']);
     // end job resource
 
     // category resource

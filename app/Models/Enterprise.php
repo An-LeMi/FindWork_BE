@@ -38,4 +38,9 @@ class Enterprise extends Model
         return $this->hasMany(Job::class, 'enterprise_id');
     }
 
+    // enterprise has many report employee
+    public function reportEmployees()
+    {
+        return $this->hasMany(ReportEmployee::class, 'enterprise_id');
+    }
 }

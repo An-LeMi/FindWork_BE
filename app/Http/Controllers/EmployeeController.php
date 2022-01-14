@@ -697,7 +697,7 @@ class EmployeeController extends Controller
         }
         if ($employeeJob->status != "accepted"){
             return response()->json([
-                'message' => 'You can not report this job',
+                'message' => 'You can not report unaccpeted job',
             ], Response::HTTP_BAD_REQUEST);
         }
 
