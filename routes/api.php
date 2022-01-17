@@ -1,13 +1,16 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BankAccountController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\EnterpriseController;
 use App\Http\Controllers\SkillController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\JobController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -128,6 +131,9 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('job/{job}/employee/{employee}/reports', [JobController::class, 'getReports']);
     // end job resource
 
+    // bank account resource
+    Route::resource('bank_account', BankAccountController::class)->only('index', 'store', 'destroy');
+
     // category resource
     Route::resource('category', CategoryController::class);
     // get all skills of category
@@ -136,4 +142,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::resource('skill', SkillController::class);
     // search skill by name
     Route::get('skill/search/{name}', [SkillController::class, 'searchSkillName']);
+
+    // payment controller
+    Route::post('payment/', [PaymentController::class, 'pay']);
 });

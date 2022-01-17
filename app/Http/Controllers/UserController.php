@@ -136,7 +136,7 @@ class UserController extends Controller
         ]);
 
         $user = User::find($id);
-        if((Hash::check($field['old_password'], $user->password) && $user)){
+        if ((Hash::check($field['old_password'], $user->password) && $user)) {
             $user->update([
                 'password' => Hash::make($request->new_password)
             ]);
@@ -144,11 +144,36 @@ class UserController extends Controller
                 'user' => $user,
                 'message' => 'Update password success'
             ], Response::HTTP_OK);
-        }
-        else {
+        } else {
             return response()->json([
                 'message' => 'Password is incorrect'
             ], Response::HTTP_UNAUTHORIZED);
         }
+    }
+
+    public static function update_rank($month)
+    {
+        $user = auth()->user();
+        // cast $user as User
+        $user = User::find($user->id);
+
+        // if don't have rank
+        // rank_expire_date = now + month
+        // else rank_expire_date = rank_expire_date + month
+        if ($user->rank == 0) {
+            $user->update([
+                'rank' => 1,
+                'rank_expire_date' => now()->addMonth($month)
+            ]);
+        } else {
+            $user->update([
+                'rank_expire_date' => date('Y-m-d H:i:s', strtotime($user->rank_expire_date . ' + ' . $month . ' month'))
+            ]);
+        }
+
+        return response()->json([
+            'user' => $user,
+            'message' => 'Update rank success'
+        ], Response::HTTP_OK);
     }
 }

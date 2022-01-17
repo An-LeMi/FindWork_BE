@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddRateToUserTable extends Migration
+class AddRankToUsersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -15,8 +15,8 @@ class AddRateToUserTable extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             //
-            $table->integer('number_of_rate')->default(0);
-            $table->float('rating')->default(0.0);
+            $table->integer('rank')->default(0);
+            $table->date('rank_expire_date')->nullable();
         });
     }
 

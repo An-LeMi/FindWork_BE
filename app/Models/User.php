@@ -23,6 +23,8 @@ class User extends Authenticatable
         'role',
         'nubmer_of_rate',
         'rating',
+        'rank',
+        'rank_expire_date',
     ];
 
     /**
@@ -33,6 +35,7 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'rank_expire_date',
     ];
 
     /**
@@ -53,5 +56,11 @@ class User extends Authenticatable
     public function enterprise()
     {
         return $this->hasOne(Enterprise::class);
+    }
+
+    // user has many bank accounts
+    public function bankAccounts()
+    {
+        return $this->hasMany(BankAccount::class);
     }
 }

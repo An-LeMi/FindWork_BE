@@ -21,6 +21,7 @@ class AuthController extends Controller
             'password' => 'required|confirmed',
             // role required, employee or enterprise
             'role' => 'required|in:employee,enterprise',
+            
         ]);
 
         $user = User::create([
