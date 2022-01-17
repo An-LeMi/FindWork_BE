@@ -69,11 +69,13 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     // get all offers of employee
     Route::get('employee/{employee}/jobs', [EmployeeController::class, 'getOffers']);
     // get all invited jobs of employee
-    Route::get('employee/{employee}/invited',[EmployeeController::class, 'getInvitedJobs']);
+    Route::get('employee/{employee}/invited', [EmployeeController::class, 'getInvitedJobs']);
     // get alls job (order by number of similar skill)
     Route::get('employee/{employee}/jobs/match', [EmployeeController::class, 'showJobsMatch']);
     // get jobs by recent
     Route::get('employee/{employee}/jobs/recent', [EmployeeController::class, 'showJobsRecent']);
+    // rate enterprise
+    Route::post('employee/{employee}/job/{job}/rating', [EmployeeController::class, 'updateRating']);
 
     // report-job relationship
     // create report
@@ -99,7 +101,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     // get all skills of a job
     Route::get('job/{job}/skills', [JobController::class, 'getSkills']);
     // search job by name
-    Route::get('job/search/{title}',[JobController::class, 'searchJobTitle']);
+    Route::get('job/search/{title}', [JobController::class, 'searchJobTitle']);
 
     // employer-job relationship
     // add offer (job request employee)

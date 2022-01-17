@@ -8,6 +8,7 @@ use App\Models\EmployeeJob;
 use App\Models\Enterprise;
 use App\Models\Job;
 use App\Models\ReportJob;
+use App\Models\User;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -665,6 +666,66 @@ class EmployeeController extends Controller
         ], Response::HTTP_OK);
     }
 
+    // update rating enterprise
+    public function updateRating(Request $request, $employee_id, $job_id)
+    {
+        $employee = Employee::find($employee_id);
+        if (!$employee) {
+            return response()->json([
+                'message' => 'employee not found'
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        // check employee_id is this user_id
+        if ($employee->user_id != auth()->user()->id) {
+            return response()->json([
+                'message' => 'This employee_id is not this user'
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
+        // validate rate
+        $request->validate([
+            "rate" => "required|integer|between:0,5",
+        ]);
+
+        // check job id
+        $job = Job::find($job_id);
+        if (!$job) {
+            return response()->json([
+                'message' => 'Job not found'
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        $enterprise_user = User::find($job->enterprise_id);
+        if (!$enterprise_user || $enterprise_user->role != 'enterprise'){
+            return response()->json([
+                'message' => 'enterprise not fount'
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        $employeeJob = EmployeeJob::where('job_id', $job_id)->where('employee_id', $employee_id)->first();
+        if (!$employeeJob) {
+            return response()->json([
+                'message' => 'employee job not found'
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        if ($employeeJob->status != "accepted") {
+            return response()->json([
+                'message' => 'Cannot vote'
+            ], Response::HTTP_FORBIDDEN);
+        } else {
+            $rating = $enterprise_user->rating;
+            $num_rates = $enterprise_user->number_of_rate;
+            $enterprise_user->rating = ($rating + $request->rate) / ($num_rates + 1);
+            $enterprise_user->number_of_rate = $num_rates + 1;
+            $enterprise_user->update();
+            return response()->json([
+                'message' => 'Rating success'
+            ], Response::HTTP_OK);
+        }
+    }
+
     /**
      * report function
      */
@@ -695,7 +756,7 @@ class EmployeeController extends Controller
                 'message' => 'Job not found'
             ], Response::HTTP_NOT_FOUND);
         }
-        if ($employeeJob->status != "accepted"){
+        if ($employeeJob->status != "accepted") {
             return response()->json([
                 'message' => 'You can not report unaccpeted job',
             ], Response::HTTP_BAD_REQUEST);
@@ -747,7 +808,7 @@ class EmployeeController extends Controller
         }
 
         $reportJob = ReportJob::find($report_id);
-        if (!$reportJob){
+        if (!$reportJob) {
             return response()->json([
                 'message' => 'Report job not found'
             ], Response::HTTP_NOT_FOUND);
@@ -788,7 +849,7 @@ class EmployeeController extends Controller
         }
 
         $reportJob = ReportJob::find($report_id);
-        if (!$reportJob){
+        if (!$reportJob) {
             return response()->json([
                 'message' => 'Report job not found'
             ], Response::HTTP_NOT_FOUND);
@@ -824,7 +885,7 @@ class EmployeeController extends Controller
         }
 
         $reportJobs = ReportJob::where('job_id', $job_id)->get();
-        if (!$reportJobs){
+        if (!$reportJobs) {
             return response()->json([
                 'message' => 'Report jobs not found'
             ], Response::HTTP_NOT_FOUND);
