@@ -47,7 +47,7 @@ class EmployeeController extends Controller
      */
     public function store(Request $request)
     {
-        $field = $request->validate([
+        $request->validate([
             "first_name" => "required",
             "last_name" => "required",
             "email" => "required|email|unique:employees",
@@ -62,9 +62,9 @@ class EmployeeController extends Controller
         }
 
         // add user_id to feild
-        $field['user_id'] = $user->id;
+        $request['user_id'] = $user->id;
 
-        $employee = Employee::create($field);
+        $employee = Employee::create($request->all());
 
         return response()->json([
             'employee' => $employee,
@@ -129,14 +129,14 @@ class EmployeeController extends Controller
             ], Response::HTTP_NOT_FOUND);
         }
 
-        $field = $request->validate([
+        $request->validate([
             "first_name" => "required",
             "last_name" => "required",
             "email" => "required|email|unique:employees"
         ]);
 
         // update
-        $employee->update($field);
+        $employee->update($request->all());
 
 
         return response()->json([
@@ -697,7 +697,7 @@ class EmployeeController extends Controller
         }
 
         $enterprise_user = User::find($job->enterprise_id);
-        if (!$enterprise_user || $enterprise_user->role != 'enterprise'){
+        if (!$enterprise_user || $enterprise_user->role != 'enterprise') {
             return response()->json([
                 'message' => 'enterprise not fount'
             ], Response::HTTP_NOT_FOUND);
