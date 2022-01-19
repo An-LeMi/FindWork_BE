@@ -52,7 +52,7 @@ class JobController extends Controller
     public function store(Request $request)
     {
         //
-        $field = $request->validate([
+        $request->validate([
             "title" => "required|string",
         ]);
 
@@ -65,9 +65,9 @@ class JobController extends Controller
         }
 
         // add enterprise_id to field
-        $field['enterprise_id'] = $user->id;
+        $request['enterprise_id'] = $user->id;
 
-        $job = Job::create($field);
+        $job = Job::create($request);
 
         return response()->json([
             'job' => $job,
@@ -129,7 +129,7 @@ class JobController extends Controller
                 'message' => 'Job not found'
             ], Response::HTTP_NOT_FOUND);
         }
-        $field = $request->validate([
+        $request->validate([
             "title" => "required|string",
         ]);
 
@@ -141,7 +141,7 @@ class JobController extends Controller
             ], Response::HTTP_BAD_REQUEST);
         }
 
-        $job->update($field);
+        $job->update($request->all());
         return response()->json([
             'job' => $job,
             'message' => 'Job updated'
@@ -323,11 +323,11 @@ class JobController extends Controller
         }
 
         // validate request
-        $field = $request->validate([
+        $request->validate([
             "level" => "required|integer|between:1,5",
         ]);
 
-        $jobSkill->update($field);
+        $jobSkill->update($request->all());
 
         return response()->json([
             'jobSkill' => $jobSkill,
@@ -479,11 +479,11 @@ class JobController extends Controller
             ], Response::HTTP_BAD_REQUEST);
         } else {
             // validate request
-            $field = $request->validate([
+            $request->validate([
                 "status" => "required|string|in:pending,accepted,rejected",
             ]);
 
-            $employeeJob->update($field);
+            $employeeJob->update($request->all());
 
             return response()->json([
                 'employeeJob' => $employeeJob,
