@@ -9,6 +9,8 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ReportEmployeeController;
+use App\Http\Controllers\ReportJobController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -82,13 +84,13 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     // report-job relationship
     // create report
-    Route::post('employee/{employee}/job/{job}/report', [EmployeeController::class, 'storeReport']);
+    Route::post('employee/{employee}/job/{job}/report', [ReportJobController::class, 'storeReport']);
     // update report
-    Route::put('employee/{employee}/job/{job}/report/{report}', [EmployeeController::class, 'updateReport']);
+    Route::put('employee/{employee}/job/{job}/report/{report}', [ReportJobController::class, 'updateReport']);
     // delete report
-    Route::delete('employee/{employee}/job/{job}/report/{report}', [EmployeeController::class, 'destroyReport']);
+    Route::delete('employee/{employee}/job/{job}/report/{report}', [ReportJobController::class, 'destroyReport']);
     // show all report
-    Route::get('employee/{employee}/job/{job}/reports', [EmployeeController::class, 'getReports']);
+    Route::get('employee/{employee}/job/{job}/reports', [ReportJobController::class, 'getReports']);
     // end employee resource
 
     /**
@@ -122,13 +124,13 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     // report-employee relationship
     // create report
-    Route::post('job/{job}/employee/{employee}/report', [JobController::class, 'storeReport']);
+    Route::post('job/{job}/employee/{employee}/report', [ReportEmployeeController::class, 'storeReport']);
     // update report
-    Route::put('job/{job}/employee/{employee}/report/{report}', [JobController::class, 'updateReport']);
+    Route::put('job/{job}/employee/{employee}/report/{report}', [ReportEmployeeController::class, 'updateReport']);
     // delete report
-    Route::delete('job/{job}/employee/{employee}/report/{report}', [JobController::class, 'destroyReport']);
-    // show all report
-    Route::get('job/{job}/employee/{employee}/reports', [JobController::class, 'getReports']);
+    Route::delete('job/{job}/employee/{employee}/report/{report}', [ReportEmployeeController::class, 'destroyReport']);
+    // show all report of employee
+    Route::get('job/{job}/employee/{employee}/reports', [ReportEmployeeController::class, 'getReports']);
     // end job resource
 
     // bank account resource
