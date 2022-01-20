@@ -34,6 +34,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('logout', [AuthController::class, 'logout']);
     Route::get('user', [AuthController::class, 'getUser']);
     Route::post('user/{id}/update_password', [UserController::class, 'update_password']);
+    Route::get('user/{id}/rate', [UserController::class, 'getRating']);
 
     /**
      * enterprise resource

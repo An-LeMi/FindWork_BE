@@ -176,4 +176,22 @@ class UserController extends Controller
             'message' => 'Update rank success'
         ], Response::HTTP_OK);
     }
+
+    public function getRating($id){
+
+        $user = User::find($id);
+        if (!$user) {
+            return response()->json([
+                'message' => 'User not found',
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        $rate = $user->rating;
+        $number_of_rate = $user->number_of_rate;
+
+        return response()->json([
+            'rate' => $rate,
+            'number_of_rate' => $number_of_rate
+        ], Response::HTTP_OK);
+    }
 }
