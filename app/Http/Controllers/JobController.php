@@ -67,7 +67,7 @@ class JobController extends Controller
         // add enterprise_id to field
         $request['enterprise_id'] = $user->id;
 
-        $job = Job::create($request);
+        $job = Job::create($request->all());
 
         return response()->json([
             'job' => $job,
